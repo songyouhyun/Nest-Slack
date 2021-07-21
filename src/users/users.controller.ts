@@ -4,6 +4,7 @@ import { ApiOperation } from '@nestjs/swagger'
 import { JoinRequestDto } from 'src/users/dto/join.request.dto';
 import { ApiTags, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
+import { User } from 'src/common/decorators/user.decorator';
 
 @ApiTags('USER')
 @Controller('users')
@@ -20,8 +21,8 @@ export class UsersController {
     })
     @ApiOperation({ summary: '내정보 조회'})
     @Get()
-    getUsers(@Req() req) {
-        req.user;
+    getUsers(@User() user) {
+        return user;    // user parameter = request.user
     }
 
     @ApiOperation({ summary: '회원가입'})
@@ -36,8 +37,8 @@ export class UsersController {
     })
     @ApiOperation({ summary: '로그인'})
     @Post('login')
-    logIn() {
-
+    logIn(@User() user) {
+        return user;
     }
 
     @ApiOperation({ summary: '로그아웃'})
