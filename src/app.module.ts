@@ -4,16 +4,14 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './middlewares/logger.middlewares';
 import { UsersModule } from './users/users.module';
-import { WorkspacesModule } from './workspace/workspace.module';
 import { ChannelsModule } from './channels/channels.module';
 import { DmsModule } from './dms/dms.module';
-import { WorkspaceController } from './workspace/workspace.controller';
-import { WorkspaceService } from './workspace/workspace.service';
+import { WorkspacesModule } from './workspaces/workspaces.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), UsersModule, WorkspacesModule, ChannelsModule, DmsModule],
-  controllers: [AppController, WorkspaceController],
-  providers: [AppService, WorkspaceService],
+  imports: [ConfigModule.forRoot(), UsersModule, ChannelsModule, DmsModule, WorkspacesModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
