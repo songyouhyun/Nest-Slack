@@ -10,7 +10,7 @@ import { WorkspaceMembers } from './src/entities/WorkspaceMembers';
 import { Workspaces } from './src/entities/Workspaces';
 
 dotenv.config();
-const config: TypeOrmModuleOptions = {
+const ormconfig: TypeOrmModuleOptions = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,
@@ -36,4 +36,4 @@ const config: TypeOrmModuleOptions = {
   keepConnectionAlive: true, // 핫리로딩 할 때, DB는 연결을 끊어버린다. 그것을 방지하기 위한 option
 };
 
-export = config;
+export = ormconfig;
