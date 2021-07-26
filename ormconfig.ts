@@ -31,7 +31,7 @@ const config: TypeOrmModuleOptions = {
   cli: { migrationsDir: 'src/migrations' },
   autoLoadEntities: true,
   charset: 'utf8mb4',
-  synchronize: true,
+  synchronize: false,
   logging: true,
   keepConnectionAlive: true, // 핫리로딩 할 때, DB는 연결을 끊어버린다. 그것을 방지하기 위한 option
 };
