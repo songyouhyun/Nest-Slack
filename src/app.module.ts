@@ -9,9 +9,11 @@ import { DmsModule } from './dms/dms.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as ormconfig from '../ormconfig';
+import { Users } from './entities/Users';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Users]),
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     WorkspacesModule,
