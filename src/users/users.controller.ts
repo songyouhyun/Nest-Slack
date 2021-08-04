@@ -13,7 +13,7 @@ import { ApiTags, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserDto } from 'src/common/dto/user.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { UndefinedToNullInterceptor } from 'src/common/Interceptors/undefinedToNull.interceptor';
-import { LocalAuthGuard } from '../auth/local-auth.guard';
+import { LocalAuthGuard } from '../auth/guard/local-auth.guard';
 
 @UseInterceptors(UndefinedToNullInterceptor) // 앞으로 이 컨트롤러에서 return 하는 값이 undefined 라면 다 null 로 치환
 @ApiTags('USER')
