@@ -10,6 +10,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as ormconfig from '../ormconfig';
 import { Users } from './entities/Users';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Users } from './entities/Users';
     ChannelsModule,
     DmsModule,
     TypeOrmModule.forRoot(ormconfig),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
