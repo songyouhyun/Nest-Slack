@@ -8,7 +8,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     if (can) {
       const request = context.switchToHttp().getRequest();
       console.log('login for cookie');
-      await super.logIn(request);
+      await super.logIn(request); // 이 콜백은 로컬전략을 통과한 user 객체를 얻게 해준다는 데 의의가 있다.
     }
     return true;
   }
