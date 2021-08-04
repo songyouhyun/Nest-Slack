@@ -3,6 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './HttpException.filter';
 import { ValidationPipe } from '@nestjs/common';
+import passport from 'passport';
 
 declare const module: any;
 
@@ -23,6 +24,8 @@ async function bootstrap() {
 
   await app.listen(3000);
 
+  app.use(passport.initialize());
+  app.use(passport.session());
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
