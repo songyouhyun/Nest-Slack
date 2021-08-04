@@ -26,7 +26,7 @@ export class LocalSerializer extends PassportSerializer {
         { id: +userId },
         {
           select: ['id', 'email', 'nickname'],
-          relations: ['Workspaces'],
+          relations: ['Workspaces'], // 사용자 정보를 가져올 때, Id, Email, Nickname 뿐만 아니라, 자신이 속해있는 Workspace까지 다 같이 가져오게 된다.
         },
       )
       .then((user) => {
