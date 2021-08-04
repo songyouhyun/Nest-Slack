@@ -2,10 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  Post,
+  Post, Req, Res,
   UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+  UseInterceptors
+} from "@nestjs/common";
 import { UsersService } from './users.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { JoinRequestDto } from 'src/users/dto/join.request.dto';
@@ -54,5 +54,9 @@ export class UsersController {
 
   @ApiOperation({ summary: '로그아웃' })
   @Post('logOut')
-  logOut() {}
+  logOut(@Req() req, @Res() res) {
+    req.logOut();
+    res.clearCookie('connect.sid', { httpOnly: true });
+    res.send('ok');
+  }
 }
