@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Connection, Repository } from 'typeorm';
 import { Users } from 'src/entities/Users';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { WorkspaceMembers } from '../entities/WorkspaceMembers';
 import { ChannelMembers } from '../entities/ChannelMembers';
@@ -19,6 +19,10 @@ export class UsersService {
   getUser() {}
   // 사용자를 만들고, 바로 workspace와 channel에 들어가게 하는 method
   async join(email: string, nickname: string, password: string) {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (user) {
+      throw new UnauthorizedException('이미 존재하는 사용자입니다.');
+    }
     const hashedPassword = await bcrypt.hash(password, 12);
     const joinedUser = await this.usersRepository.save({
       email,
