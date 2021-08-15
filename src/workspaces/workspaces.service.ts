@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Workspaces } from '../entities/Workspaces';
-import { Repository, Transaction } from "typeorm";
+import { Repository, Transaction } from 'typeorm';
 import { Channels } from '../entities/Channels';
 import { WorkspaceMembers } from '../entities/WorkspaceMembers';
 import { ChannelMembers } from '../entities/ChannelMembers';
@@ -63,5 +63,13 @@ export class WorkspacesService {
     });
     // (3)
     await this.channelMembersRepository.save(channelMember);
+  }
+
+  // url을 가진 workspace안에 들어 있는 사용자를 데려오는 method
+  async getWorkspaceMembers(url: string) {
+    this.usersRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.WorkspaceMembers', 'members')
+      .innerJoin('members.Workspace', 'w');
   }
 }
