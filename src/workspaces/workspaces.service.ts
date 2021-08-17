@@ -67,9 +67,12 @@ export class WorkspacesService {
 
   // url을 가진 workspace안에 들어 있는 사용자를 데려오는 method
   async getWorkspaceMembers(url: string) {
-    this.usersRepository
+    return this.usersRepository
       .createQueryBuilder('user')
       .innerJoin('user.WorkspaceMembers', 'members')
-      .innerJoin('members.Workspace', 'w');
+      .innerJoin('members.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .getRawMany();
   }
 }
