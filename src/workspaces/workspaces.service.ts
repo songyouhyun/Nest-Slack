@@ -73,7 +73,7 @@ export class WorkspacesService {
       .innerJoin('members.Workspace', 'workspace', 'workspace.url = :url', {
         url,
       })
-      .getRawMany();
+      .getMany();
   }
   // Workspace에 사람을 초대하는 method
   async createWorkspaceMembers(url, email) {
