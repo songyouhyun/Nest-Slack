@@ -65,7 +65,7 @@ export class WorkspacesService {
     await this.channelMembersRepository.save(channelMember);
   }
 
-  // url을 가진 workspace안에 들어 있는 사용자를 데려오는 method
+  // 해당 url을 가진 workspace안에 들어 있는 사용자들을 모두 데려오는 method
   async getWorkspaceMembers(url: string) {
     return this.usersRepository
       .createQueryBuilder('user')
@@ -75,6 +75,22 @@ export class WorkspacesService {
       })
       .getMany();
   }
+  // 해당 url을 가진 workspace안에 들어 있는 사용자를 한 명만 데려오는 method
+  async getWorkspaceMember(url: string, id: number) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .innerJoinAndSelect(
+        'user.Workspaces',
+        'workspaces',
+        'workspaces.url = :url',
+        {
+          url,
+        },
+      )
+      .getOne();
+  }
+
   // Workspace에 사람을 초대하는 method
   async createWorkspaceMembers(url, email) {
     // 먼저 Workspace를 찾는다.
