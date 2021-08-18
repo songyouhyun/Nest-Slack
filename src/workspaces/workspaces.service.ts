@@ -75,4 +75,40 @@ export class WorkspacesService {
       })
       .getRawMany();
   }
+  // Workspace에 사람을 초대하는 method
+  async createWorkspaceMembers(url, email) {
+    // 먼저 Workspace를 찾는다.
+    const workspace = await this.workspacesRepository.findOne({
+      where: { url },
+      // relations: ['Channels'], // workspace에 있는 channel들이 다 딸려들어옴, join과 똑같음
+      // QueryBuilder를 사용한 코드 ⤵️
+      // this.workspaceRepository.createQueryBuilder('workspace').innerJoinAndSelect('workspace.Channels', 'channels').getOne();
+      // QueryBuilder || join || relations
+      join: {
+        alias: 'workspace',
+        innerJoinAndSelect: {
+          channels: 'workspace.Channels',
+        },
+      },
+    });
+    // 사용자를 email로 찾고
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      return null;
+    }
+    // workspace에 해당 사용자를 추가해서
+    const workspaceMember = this.workspaceMembersRepository.create({
+      WorkspaceId: workspace.id,
+      UserId: user.id,
+    });
+    // 저장하고
+    await this.workspaceMembersRepository.save(workspaceMember);
+    // 모든 채널에 바로 초대하는게 아니라 '일반' 채널, 즉 기본 채널에만 먼저 추가
+    const channelMember = this.channelMembersRepository.create({
+      ChannelId: workspace.Channels.find((v) => v.name === '일반').id,
+      UserId: user.id,
+    });
+    // 그리고 저장
+    await this.channelMembersRepository.save(channelMember);
+  }
 }
