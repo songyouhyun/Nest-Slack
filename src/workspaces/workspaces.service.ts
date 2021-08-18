@@ -91,7 +91,7 @@ export class WorkspacesService {
         },
       },
     });
-    // 사용자를 email로 찾고
+    // workspace에 초대할 사용자를 email로 찾고
     const user = await this.usersRepository.findOne({ where: { email } });
     if (!user) {
       return null;
