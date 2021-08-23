@@ -21,4 +21,24 @@ export class ChannelsService {
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
   ) {}
+  async findById(id: number) {
+    return this.channelsRepository.findOne({ where: { id } });
+  }
+
+  async getWorkspaceChannels(url: string, myId: number) {
+    return this.channelsRepository
+      .createQueryBuilder('channels')
+      .innerJoinAndSelect(
+        'channels.ChannelMembers',
+        'channelMembers',
+        'channelMembers.userId = :myId',
+        { myId },
+      )
+      .innerJoinAndSelect(
+        'channels.Workspace',
+        'workspace',
+        'workspace.url = :url',
+        { url },
+      );
+  }
 }
