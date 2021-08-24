@@ -25,7 +25,7 @@ export class ChannelsService {
     return this.channelsRepository.findOne({ where: { id } });
   }
   // Workspace Channel 여러 개 가져오기
-  async getWorkspaceChannels(myId: number, url: string,) {
+  async getWorkspaceChannels(myId: number, url: string) {
     return this.channelsRepository
       .createQueryBuilder('channels')
       .innerJoinAndSelect(
@@ -51,5 +51,37 @@ export class ChannelsService {
       },
       relations: ['Workspace'],
     });
+  }
+
+  // Workspace에 Channel 추가
+  async createWorkspaceChannels(url: string, name: string, myId: number) {
+    const workspace = await this.workspacesRepository.findOne({
+      where: { url },
+    });
+    const channel = this.channelsRepository.create({
+      name: name,
+      WorkspaceId: workspace.id,
+    });
+    const channelReturned = await this.channelsRepository.save(channel);
+    const channelMembers = this.channelMembersRepository.create({
+      UserId: myId,
+      ChannelId: channelReturned.id,
+    });
+    await this.channelMembersRepository.save(channelMembers); // channelMember로는 항상 '나'를 저장
+  }
+
+  // 정확한 채널을 가져오기 위해서는 그냥 channel만 가져와서는 안된다.
+  // '일반'이라는 채널으로 예를 들었을 때, 다른 Workspace에도 '일반'이라는 채널이 있을 수 있다.
+  // 그럼으로 Workspace의 url도 join을 해서 검색한다.
+  async getWorkspaceChannelMembers(url: string, name: string) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.Channels', 'channels', 'channels.name = :name', {
+        name,
+      })
+      .innerJoin('channels.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .getMany();
   }
 }
