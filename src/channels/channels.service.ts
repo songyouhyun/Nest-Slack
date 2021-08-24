@@ -84,4 +84,36 @@ export class ChannelsService {
       })
       .getMany();
   }
+
+  // Channel에 Member를 추가하는 method
+  async createWorkspaceChannelMembers(url, name, email) {
+    // channel 찾기
+    const channel = await this.channelsRepository
+      .createQueryBuilder('channel')
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .where('channel.name = :name', { name })
+      .getOne();
+    if (!channel) {
+      return null;
+    }
+    // user 찾기
+    const user = await this.channelsRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .innerJoin('user.Workspaces', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .getOne();
+    if (!user) {
+      return null;
+    }
+    // channel과 user를 연결해서 channelMembersRepository에 channelMemmber 저장
+    const channelMember = await this.channelMembersRepository.create({
+      ChannelId: channel.id,
+      UserId: user.id,
+    });
+    await this.channelMembersRepository.save(channelMember);
+  }
 }
