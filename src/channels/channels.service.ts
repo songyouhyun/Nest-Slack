@@ -24,21 +24,32 @@ export class ChannelsService {
   async findById(id: number) {
     return this.channelsRepository.findOne({ where: { id } });
   }
-
-  async getWorkspaceChannels(url: string, myId: number) {
+  // Workspace Channel 여러 개 가져오기
+  async getWorkspaceChannels(myId: number, url: string,) {
     return this.channelsRepository
       .createQueryBuilder('channels')
       .innerJoinAndSelect(
         'channels.ChannelMembers',
         'channelMembers',
         'channelMembers.userId = :myId',
-        { myId },
+        { myId }, // 내가 들어가있는 Channels 다 가져오고
       )
       .innerJoinAndSelect(
         'channels.Workspace',
         'workspace',
         'workspace.url = :url',
-        { url },
-      );
+        { url }, // 그 채널에 대한 Workspaces도 다 가져오기
+      )
+      .getMany();
+  }
+
+  // Workspace Channel 한 개만 가져오기
+  async getWorkspaceChannel(url: string, name: string) {
+    return this.channelsRepository.findOne({
+      where: {
+        name,
+      },
+      relations: ['Workspace'],
+    });
   }
 }
