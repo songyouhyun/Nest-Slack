@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channels } from '../entities/Channels';
 import { Repository } from 'typeorm';
@@ -96,7 +96,7 @@ export class ChannelsService {
       .where('channel.name = :name', { name })
       .getOne();
     if (!channel) {
-      return null;
+      throw new NotFoundException('채널이 존재하지 않습니다.');
     }
     // user 찾기
     const user = await this.channelsRepository
@@ -107,7 +107,7 @@ export class ChannelsService {
       })
       .getOne();
     if (!user) {
-      return null;
+      throw new NotFoundException('사용자가 존재하지 않습니다.');
     }
     // channel과 user를 연결해서 channelMembersRepository에 channelMemmber 저장
     const channelMember = await this.channelMembersRepository.create({
@@ -115,5 +115,27 @@ export class ChannelsService {
       UserId: user.id,
     });
     await this.channelMembersRepository.save(channelMember);
+  }
+
+  // Channel에서 채팅한 내역 가져오기
+  async getWorkspaceChannelChats(
+    url: string,
+    name: string,
+    perPage: number,
+    page: number,
+  ) {
+    return this.channelChatsRepository
+      .createQueryBuilder('channelChats')
+      .innerJoin('channelChats.Channel', 'channel', 'channel.name = :name', {
+        name,
+      })
+      .innerJoin('channel.Workspace', 'workspace', 'workspace.url = :url', {
+        url,
+      })
+      .innerJoinAndSelect('channelChats.User', 'user')
+      .orderBy('channelChats.createdAt', 'DESC')
+      .take(perPage) // limit, 즉 한 페이지에 perPage만큼을 가져온다.
+      .skip(perPage * (page - 1)) // skip == pagination
+      .getMany();
   }
 }
